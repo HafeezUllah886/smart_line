@@ -28,8 +28,8 @@
                  $activeMenu = 'productPage';
              } elseif (\Illuminate\Support\Str::startsWith($routeName, ['sale', 'shift'])) {
                  $activeMenu = 'salePage';
-             } elseif (\Illuminate\Support\Str::startsWith($routeName, ['purchase'])) {
-                 $activeMenu = 'purchasePage';
+             } elseif (\Illuminate\Support\Str::startsWith($routeName, ['order'])) {
+                 $activeMenu = 'orderPage';
              } elseif (\Illuminate\Support\Str::startsWith($routeName, ['reports', 'profit', 'daily'])) {
                  $activeMenu = 'reportsPage';
              } elseif (\Illuminate\Support\Str::startsWith($routeName, ['settings', 'profile', 'users'])) {
@@ -43,15 +43,10 @@
                      <i class="ti ti-smart-home"></i>
                  </a>
              </li>
-             <li class="nav-item" title="Sale">
-                 <a href="#" class="nav-link {{ $activeMenu == 'salePage' ? 'active' : '' }}"
-                     data-target="salePage">
-                     <i class="ti ti-shopping-cart"></i>
-                 </a>
-             </li>
-             <li class="nav-item" title="Purchase">
-                 <a href="#" class="nav-link {{ $activeMenu == 'purchasePage' ? 'active' : '' }}"
-                     data-target="purchasePage">
+
+             <li class="nav-item" title="Order">
+                 <a href="#" class="nav-link {{ $activeMenu == 'orderPage' ? 'active' : '' }}"
+                     data-target="orderPage">
                      <i class="ti ti-truck"></i>
                  </a>
              </li>
@@ -115,26 +110,15 @@
                      </li>
                  </ul>
 
-                 <!-- Sale -->
-                 <ul class="main-menu {{ $activeMenu == 'salePage' ? 'active' : '' }}" id="salePage"
-                     style="display: {{ $activeMenu == 'salePage' ? 'block' : 'none' }};">
-                     <li class="no-sub {{ $routeName == 'sale.create' ? 'active' : '' }}"><a
-                             href="{{ route('sale.create') }}"
-                             class="{{ $routeName == 'sale.create' ? 'active' : '' }}">Create Sales</a></li>
-                     <li class="no-sub {{ $routeName == 'sale.index' ? 'active' : '' }}"><a
-                             href="{{ route('sale.index') }}"
-                             class="{{ $routeName == 'sale.index' ? 'active' : '' }}">Sales History</a></li>
-                 </ul>
-
-                 <!-- Purchase -->
-                 <ul class="main-menu {{ $activeMenu == 'purchasePage' ? 'active' : '' }}" id="purchasePage"
-                     style="display: {{ $activeMenu == 'purchasePage' ? 'block' : 'none' }};">
-                     <li class="no-sub {{ $routeName == 'purchase.create' ? 'active' : '' }}"><a
-                             href="{{ route('purchase.create') }}"
-                             class="{{ $routeName == 'purchase.create' ? 'active' : '' }}">Create Purchase</a></li>
-                     <li class="no-sub {{ $routeName == 'purchase.index' ? 'active' : '' }}"><a
-                             href="{{ route('purchase.index') }}"
-                             class="{{ $routeName == 'purchase.index' ? 'active' : '' }}">Purchase History</a></li>
+                 <!-- Order -->
+                 <ul class="main-menu {{ $activeMenu == 'orderPage' ? 'active' : '' }}" id="orderPage"
+                     style="display: {{ $activeMenu == 'orderPage' ? 'block' : 'none' }};">
+                     <li class="no-sub {{ $routeName == 'orders.create' ? 'active' : '' }}"><a
+                             href="{{ route('orders.create') }}"
+                             class="{{ $routeName == 'orders.create' ? 'active' : '' }}">Create Order</a></li>
+                     <li class="no-sub {{ $routeName == 'orders.index' ? 'active' : '' }}"><a
+                             href="{{ route('orders.index') }}"
+                             class="{{ $routeName == 'orders.index' ? 'active' : '' }}">Orders History</a></li>
                  </ul>
 
                  <!-- Finance -->
@@ -151,6 +135,10 @@
                              href="{{ route('account.index', ['filter' => 'Customer']) }}"
                              class="{{ request('filter') == 'Customer' ? 'active' : '' }}">Customer
                              Accounts</a></li>
+                     <li class="no-sub {{ request('filter') == 'Check Post' ? 'active' : '' }}"><a
+                             href="{{ route('account.index', ['filter' => 'Check Post']) }}"
+                             class="{{ request('filter') == 'Check Post' ? 'active' : '' }}">Check
+                             Post Accounts</a></li>
                      <li class="no-sub {{ request('filter') == 'Supplier' ? 'active' : '' }}"><a
                              href="{{ route('account.index', ['filter' => 'Supplier']) }}"
                              class="{{ request('filter') == 'Supplier' ? 'active' : '' }}">Supplier
@@ -227,9 +215,9 @@
                      <li class="no-sub {{ $routeName == 'profile' ? 'active' : '' }}"><a
                              href="{{ route('profile') }}"
                              class="{{ $routeName == 'profile' ? 'active' : '' }}">Profile</a></li>
-                     <li class="no-sub {{ $routeName == 'attendants.index' ? 'active' : '' }}"><a
-                             href="{{ route('attendants.index') }}"
-                             class="{{ $routeName == 'attendants.index' ? 'active' : '' }}">Pump Attendants</a></li>
+                     <li class="no-sub {{ $routeName == 'drivers.index' ? 'active' : '' }}"><a
+                             href="{{ route('drivers.index') }}"
+                             class="{{ $routeName == 'drivers.index' ? 'active' : '' }}">Drivers</a></li>
                      {{--   <li class="no-sub"><a href="#">Users</a></li> --}}
                      <li class="no-sub"><a href="{{ route('logout') }}">Logout</a></li>
                  </ul>

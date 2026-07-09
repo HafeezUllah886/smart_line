@@ -2,20 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\attendants;
-use App\Models\products;
+use App\Models\drivers;
 use Illuminate\Http\Request;
 
-class AttendantController extends Controller
+class DriverController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $attendants = attendants::all();
+        $drivers = drivers::all();
 
-        return view('settings.attendants', compact('attendants'));
+        return view('settings.drivers', compact('drivers'));
     }
 
     /**
@@ -33,22 +32,22 @@ class AttendantController extends Controller
     {
         $request->validate(
             [
-                'name' => 'unique:attendants,name',
+                'name' => 'unique:drivers,name',
             ],
             [
-                'name.unique' => 'Attendant already Existing',
+                'name.unique' => 'Driver already Existing',
             ]
         );
 
-        attendants::create($request->all());
+        drivers::create($request->all());
 
-        return back()->with('success', 'Attendant Created');
+        return back()->with('success', 'Driver Created');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(attendants $attendants)
+    public function show(drivers $driver)
     {
         //
     }
@@ -56,7 +55,7 @@ class AttendantController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(attendants $attendants)
+    public function edit(drivers $driver)
     {
         //
     }
@@ -68,24 +67,27 @@ class AttendantController extends Controller
     {
         $request->validate(
             [
-                'name' => 'unique:attendants,name,'.$id,
+                'name' => 'unique:drivers,name,'.$id,
             ],
             [
-                'name.unique' => 'Attendant already Existing',
+                'name.unique' => 'Driver already Existing',
             ]
         );
 
-        $attendant = attendants::find($id);
-        $attendant->update($request->all());
+        $driver = drivers::find($id);
+        $driver->update($request->all());
 
-        return back()->with('success', 'Attendant Updated');
+        return back()->with('success', 'Driver Updated');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(products $products)
+    public function destroy(drivers $driver)
     {
         //
+        $driver->delete();
+
+        return back()->with('success', 'Driver Deleted');
     }
 }

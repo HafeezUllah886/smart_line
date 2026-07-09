@@ -26,6 +26,7 @@
                                             <option value="Business">Business</option>
                                             <option value="Customer">Customer</option>
                                             <option value="Supplier">Supplier</option>
+                                            <option value="Check Post">Check Post</option>
                                         </select>
                                     </div>
                                 </div>

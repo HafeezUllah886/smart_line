@@ -5,9 +5,7 @@
         <div class="col-12">
             <div class="card ">
                 <div class="card-header d-flex justify-content-between">
-
-                    <h5>Pump Attendants</h5>
-
+                    <h5>Drivers</h5>
                     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#new">Add New</button>
                 </div>
                 <div class="card-body p-0">
@@ -24,14 +22,14 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($attendants as $key => $attendant)
+                                @foreach ($drivers as $key => $driver)
                                     <tr>
                                         <td class="text-dark">{{ $key + 1 }}</td>
-                                        <td class="text-start">{{ $attendant->name }}</td>
-                                        <td>{{ $attendant->phone }}</td>
-                                        <td>{{ $attendant->address }}</td>
+                                        <td class="text-start">{{ $driver->name }}</td>
+                                        <td>{{ $driver->phone }}</td>
+                                        <td>{{ $driver->address }}</td>
                                         <td>
-                                            @if ($attendant->is_active == 1)
+                                            @if ($driver->is_active == 1)
                                                 <span class="badge bg-success">Active</span>
                                             @else
                                                 <span class="badge bg-danger">Inactive</span>
@@ -39,18 +37,18 @@
                                         </td>
                                         <td>
                                             <button class="btn btn-primary btn-sm" data-bs-toggle="modal"
-                                                data-bs-target="#edit{{ $attendant->id }}">Edit</button>
+                                                data-bs-target="#edit{{ $driver->id }}">Edit</button>
                                         </td>
-                                        <div id="edit{{ $attendant->id }}" class="modal fade" tabindex="-1"
+                                        <div id="edit{{ $driver->id }}" class="modal fade" tabindex="-1"
                                             aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
                                             <div class="modal-dialog">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
-                                                        <h5 class="modal-title" id="myModalLabel">Edit Attendant</h5>
+                                                        <h5 class="modal-title" id="myModalLabel">Edit Driver</h5>
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                             aria-label="Close"> </button>
                                                     </div>
-                                                    <form action="{{ route('attendants.update', $attendant->id) }}"
+                                                    <form action="{{ route('drivers.update', $driver->id) }}"
                                                         method="post">
                                                         @csrf
                                                         @method('PUT')
@@ -58,20 +56,20 @@
                                                             <div class="form-group mt-2">
                                                                 <label for="name">Name</label>
                                                                 <input type="text" name="name" required
-                                                                    value="{{ $attendant->name }}" id="name"
+                                                                    value="{{ $driver->name }}" id="name"
                                                                     class="form-control">
                                                             </div>
                                                             <div class="form-group mt-2">
                                                                 <label for="phone">Phone</label>
                                                                 <input type="text" name="phone" required
-                                                                    value="{{ $attendant->phone }}" id="phone"
+                                                                    value="{{ $driver->phone }}" id="phone"
                                                                     class="form-control">
                                                             </div>
 
                                                             <div class="form-group mt-2">
                                                                 <label for="address">Address</label>
                                                                 <input type="text" name="address" required
-                                                                    value="{{ $attendant->address }}" id="address"
+                                                                    value="{{ $driver->address }}" id="address"
                                                                     class="form-control">
                                                             </div>
                                                             <div class="form-group mt-2">
@@ -79,10 +77,10 @@
                                                                 <select name="is_active" id="status"
                                                                     class="form-control">
                                                                     <option value="1"
-                                                                        {{ $attendant->is_active == '1' ? 'selected' : '' }}>
+                                                                        {{ $driver->is_active == '1' ? 'selected' : '' }}>
                                                                         Active</option>
                                                                     <option value="0"
-                                                                        {{ $attendant->is_active == '0' ? 'selected' : '' }}>
+                                                                        {{ $driver->is_active == '0' ? 'selected' : '' }}>
                                                                         Inactive</option>
                                                                 </select>
                                                             </div>
@@ -109,33 +107,27 @@
             </div>
         </div>
         <!-- Default Datatable end -->
-
-
-
     </div>
     <!-- Default Modals -->
-
     <div id="new" class="modal fade" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true"
         style="display: none;">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="myModalLabel">Create New Attendant</h5>
+                    <h5 class="modal-title" id="myModalLabel">Create New Driver</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"> </button>
                 </div>
-                <form action="{{ route('attendants.store') }}" method="post">
+                <form action="{{ route('drivers.store') }}" method="post">
                     @csrf
                     <div class="modal-body">
                         <div class="form-group mt-2">
                             <label for="name">Name</label>
                             <input type="text" name="name" required id="name" class="form-control">
                         </div>
-
                         <div class="form-group mt-2">
                             <label for="phone">Phone</label>
                             <input type="text" name="phone" required id="phone" class="form-control">
                         </div>
-
                         <div class="form-group mt-2">
                             <label for="address">Address</label>
                             <input type="text" name="address" required id="address" class="form-control">

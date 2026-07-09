@@ -26,6 +26,11 @@ class accounts extends Model
         return $query->where('type', 'Supplier');
     }
 
+    public function scopeCheckPost($query)
+    {
+        return $query->where('type', 'Check Post');
+    }
+
     public function transactions()
     {
         return $this->hasMany(transactions::class, 'accountID');

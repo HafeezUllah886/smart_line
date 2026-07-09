@@ -11,14 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('purchases', function (Blueprint $table) {
+        Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('supplier_id')->constrained('accounts', 'id');
-            $table->date('date');
-            $table->float('total')->default(0);
-            $table->string('inv')->nullable();
-            $table->text('notes')->nullable();
-            $table->bigInteger('refID');
             $table->timestamps();
         });
     }
@@ -28,6 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('purchases');
+        Schema::dropIfExists('orders');
     }
 };

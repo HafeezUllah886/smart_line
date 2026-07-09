@@ -13,9 +13,8 @@ class productsSeeder extends Seeder
     public function run(): void
     {
         $data = [
-            ['name' => 'Petrol', 'price' => 375, 'unit' => 'Liter'],
-            ['name' => 'Diesel', 'price' => 385, 'unit' => 'Liter'],
-            ['name' => '20w50 Engine Oil', 'price' => 300, 'unit' => 'Piece'],
+            ['name' => 'Petrol', 'price' => 290, 'unit' => 'Liter'],
+            ['name' => 'Diesel', 'price' => 285, 'unit' => 'Liter'],
         ];
         products::insert($data);
     }
