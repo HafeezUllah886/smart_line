@@ -69,3 +69,14 @@ function supplierBalance()
 
     return $balance;
 }
+
+function checkpostBalance()
+{
+    $accounts = \App\Models\accounts::where('type', 'Check Post')->get();
+    $balance = 0;
+    foreach ($accounts as $account) {
+        $balance += getAccountBalance($account->id);
+    }
+
+    return $balance;
+}
