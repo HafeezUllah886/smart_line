@@ -201,12 +201,12 @@
                              class="{{ $routeName == 'reportExpense' || $routeName == 'reportExpenseData' ? 'active' : '' }}">Expenses
                              Report</a>
                      </li>
-                     <li
+                     {{-- <li
                          class="no-sub {{ $routeName == 'reportDailySheet' || $routeName == 'reportDailySheetData' ? 'active' : '' }}">
                          <a href="{{ route('reportDailySheet') }}"
                              class="{{ $routeName == 'reportDailySheet' || $routeName == 'reportDailySheetData' ? 'active' : '' }}">Daily
                              Sheet</a>
-                     </li>
+                     </li> --}}
                  </ul>
 
                  <!-- Settings -->

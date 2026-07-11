@@ -10,7 +10,7 @@
                     <form action="{{ route('orders.store') }}" method="post">
                         @csrf
                         <div class="row g-1">
-                             <div class="col-md-3">
+                            <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="date">Date</label>
                                     <input type="date" name="date" id="date" class="form-control"
@@ -49,7 +49,7 @@
                                 <h5 class="text-muted"><small>Purchase Details</small></h5>
                                 <hr class="my-2">
                             </div>
-                             <div class="col-md-3">
+                            <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="supplier">Supplier</label>
                                     <select name="supplier" class="select2 w-100">
@@ -60,18 +60,23 @@
                                     </select>
                                 </div>
                             </div>
-                             <div class="col-md-6">
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="qty">Details</label>
                                     <div class="input-group">
-                                    <input type="number" step="any" min="0" name="purchase_price" placeholder="Price" id="purchase_price" class="form-control">
-                                    <input type="number" step="any" min="0" name="purchase_qty" placeholder="Qty" id="purchase_qty" class="form-control">
-                                    <input type="number" readonly step="any" min="0" name="purchase_amount" placeholder="Amount" id="purchase_amount" class="form-control">
+                                        <input type="number" step="any" min="0" name="purchase_price"
+                                            placeholder="Price" value="0" oninput="updateTotal()" id="purchase_price"
+                                            class="form-control">
+                                        <input type="number" step="any" min="0" name="purchase_qty"
+                                            placeholder="Qty" value="0" oninput="updateTotal()" id="purchase_qty"
+                                            class="form-control">
+                                        <input type="number" readonly step="any" min="0" name="purchase_amount"
+                                            placeholder="Amount" id="purchase_amount" class="form-control">
                                     </div>
                                 </div>
                             </div>
-                             
-                              <div class="col-md-3">
+
+                            <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="purchase_account">Purchase Account</label>
                                     <select name="purchase_account" id="purchase_account" class="select2 w-100">
@@ -86,7 +91,7 @@
                                 <h5 class="text-muted"><small>Sale Details</small></h5>
                                 <hr class="my-2">
                             </div>
-                             <div class="col-md-3">
+                            <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="customer">Customer</label>
                                     <select name="customer" class="select2 w-100">
@@ -101,14 +106,19 @@
                                 <div class="form-group">
                                     <label for="qty">Details</label>
                                     <div class="input-group">
-                                    <input type="number" step="any" min="0" name="sale_price" placeholder="Price" id="sale_price" class="form-control">
-                                    <input type="number" step="any" min="0" name="sale_qty" placeholder="Qty" id="sale_qty" class="form-control">
-                                    <input type="number" readonly step="any" min="0" name="sale_amount" placeholder="Amount" id="sale_amount" class="form-control">
+                                        <input type="number" step="any" min="0" name="sale_price"
+                                            placeholder="Price" value="0" id="sale_price" oninput="updateTotal()"
+                                            class="form-control">
+                                        <input type="number" step="any" min="0" name="sale_qty"
+                                            placeholder="Qty" value="0" id="sale_qty" oninput="updateTotal()"
+                                            class="form-control">
+                                        <input type="number" readonly step="any" min="0" name="sale_amount"
+                                            placeholder="Amount" id="sale_amount" class="form-control">
                                     </div>
                                 </div>
                             </div>
-                             
-                              <div class="col-md-3">
+
+                            <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="sale_account">Sale Account</label>
                                     <select name="sale_account" id="sale_account" class="select2 w-100">
@@ -119,13 +129,13 @@
                                     </select>
                                 </div>
                             </div>
-                             <div class="col-12">
+                            <div class="col-12">
                                 <h5 class="text-muted"><small>Check Posts Details</small></h5>
                                 <hr class="my-2">
                             </div>
-                           
+
                             <div class="col-12">
-                                 
+
                                 <div class="form-group">
                                     <label for="checkpost">Check Post</label>
                                     <select name="checkpost" id="checkpost" class="select2 w-100">
@@ -135,14 +145,14 @@
                                         @endforeach
                                     </select>
                                 </div>
-                           
+
 
                                 <table class="table table-striped table-hover">
                                     <thead>
                                         <th width="30%">Post</th>
                                         <th class="text-center">Amount</th>
                                         <th class="text-center">Payment</th>
-                                       
+
                                         <th></th>
                                     </thead>
                                     <tbody id="posts_list"></tbody>
@@ -156,13 +166,31 @@
                                     </tfoot>
                                 </table>
                             </div>
-                            <div class="col-2">
+                            <div class="col-3">
                                 <div class="form-group">
-                                    <label for="comp">Inv No.</label>
-                                    <input type="text" name="inv" id="inv" class="form-control">
+                                    <label for="comp">Sales Total</label>
+                                    <input type="number" id="sales_total" readonly class="form-control">
                                 </div>
                             </div>
-                           
+                            <div class="col-3">
+                                <div class="form-group">
+                                    <label for="comp">Purchase Total</label>
+                                    <input type="number" id="purchase_total" readonly class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="form-group">
+                                    <label for="comp">Route Expense</label>
+                                    <input type="number" id="route_expense" readonly class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="form-group">
+                                    <label for="comp">Profit / Loss</label>
+                                    <input type="number" id="pl" readonly class="form-control">
+                                </div>
+                            </div>
+
                             <div class="col-12 mt-2">
                                 <div class="form-group">
                                     <label for="notes">Notes</label>
@@ -172,8 +200,8 @@
                             <div class="col-12 mt-2">
                                 <button type="submit" class="btn btn-primary w-100">Create Order</button>
                             </div>
-                </div>
-            </form>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -181,23 +209,23 @@
     </div>
 @endsection
 @section('page-css')
-<link href="{{ asset('assets/vendor/select/select2.min.css') }}" rel="stylesheet" type="text/css">
+    <link href="{{ asset('assets/vendor/select/select2.min.css') }}" rel="stylesheet" type="text/css">
 @endsection
 
 @section('page-js')
-<script src="{{ asset('assets/vendor/select/select2.min.js') }}"></script>
-<script>
-    $(document).ready(function() {
-        $('.select2').select2();
-         $('#checkpost').select2({
+    <script src="{{ asset('assets/vendor/select/select2.min.js') }}"></script>
+    <script>
+        $(document).ready(function() {
+            $('.select2').select2();
+            $('#checkpost').select2({
                 placeholder: "Select a Checkpost",
                 allowClear: true,
                 width: '100%'
             });
-       
-    });
 
-     $("#checkpost").on('select2:select', function(e) {
+        });
+
+        $("#checkpost").on('select2:select', function(e) {
             var value = e.params.data.id;
             if (value) {
                 getSinglePost(value);
@@ -222,9 +250,13 @@
                         var id = post.id;
                         var html = '<tr id="row_' + id + '">';
                         html += '<td class="p-1">' + post.title + '</td>';
-                        html += '<td class="p-0"><input type="number" name="post_amount[]" oninput="updateTotal()" step="any" value="0" min="0" class="form-control form-control-sm text-center p-1" id="post_amount_' + id + '"></td>';
-                        html += '<td class="p-0"><select name="post_payment[]" id="post_payment_' + id + '" class="form-control form-control-sm text-center p-1 w-100"><option value="pending">Pending</option><option value="bydriver">By Driver</option><option value="byowner">By Owner</option></select></td>';
-                        html += '<td class="p-0"> <span class="btn btn-sm btn-danger" onclick="deleteRow('+id+')">X</span> </td>';
+                        html +=
+                            '<td class="p-0"><input type="number" name="post_amount[]" oninput="updateTotal()" step="any" value="0" min="0" class="form-control form-control-sm text-center p-1" id="post_amount_' +
+                            id + '"></td>';
+                        html += '<td class="p-0"><select name="post_payment[]" id="post_payment_' + id +
+                            '" class="form-control form-control-sm text-center p-1 w-100"><option value="pending">Pending</option><option value="bydriver">By Driver</option><option value="byowner">By Owner</option></select></td>';
+                        html += '<td class="p-0"> <span class="btn btn-sm btn-danger" onclick="deleteRow(' +
+                            id + ')">X</span> </td>';
                         html += '<input type="hidden" name="post_id[]" value="' + id + '">';
                         html += '</tr>';
                         $("#posts_list").prepend(html);
@@ -234,7 +266,7 @@
                 }
             });
         }
-        
+
         function updateTotal() {
             var total = 0;
             $("input[id^='post_amount_']").each(function() {
@@ -244,13 +276,30 @@
             });
 
             $("#totalPostAmount").html(total.toFixed(2));
+
+            var sale_price = parseFloat($("#sale_price").val());
+            var sale_qty = parseFloat($("#sale_qty").val());
+            var purchase_price = parseFloat($("#purchase_price").val());
+            var purchase_qty = parseFloat($("#purchase_qty").val());
+
+            var sale_amount = sale_price * sale_qty;
+            var purchase_amount = purchase_price * purchase_qty;
+
+            $("#sale_amount").val(sale_amount.toFixed(2));
+            $("#purchase_amount").val(purchase_amount.toFixed(2));
+
+            $("#purchase_total").val(purchase_amount.toFixed(2));
+            $("#sales_total").val(sale_amount.toFixed(2));
+            $("#route_expense").val(total.toFixed(2));
+            $("#pl").val((sale_amount - purchase_amount - total).toFixed(2));
         }
+
         function deleteRow(id) {
             existingPosts = $.grep(existingPosts, function(value) {
                 return value !== id;
             });
-            $('#row_'+id).remove();
+            $('#row_' + id).remove();
             updateTotal();
         }
-</script>
+    </script>
 @endsection

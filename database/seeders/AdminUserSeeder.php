@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\drivers;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -19,6 +20,10 @@ class AdminUserSeeder extends Seeder
                 'password' => Hash::make('admin'),
             ]
         );
+
+        drivers::create([
+            'name' => 'Test Driver',
+        ]);
 
         $this->command->info('Admin user created successfully!');
         $this->command->info('Username: admin');

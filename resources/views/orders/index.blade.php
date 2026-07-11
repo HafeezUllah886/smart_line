@@ -4,7 +4,7 @@
         <div class="col-12">
             <div class="card ">
                 <div class="card-header d-flex justify-content-between">
-                    <h5>Purchases</h5>
+                    <h5>Orders</h5>
                     <button aria-controls="canvasEnd" class="btn btn-primary" data-bs-target="#canvasEnd"
                         data-bs-toggle="offcanvas" type="button">Filter</button>
                 </div>
@@ -14,21 +14,36 @@
                             <thead>
                                 <tr>
                                     <th style="width: 10px;">#</th>
-                                    <th class="text-start">Inv #</th>
+                                    <th class="text-start">Order #</th>
                                     <th class="text-start">Date</th>
                                     <th class="text-start">Supplier</th>
-                                    <th class="text-end">Total</th>
+                                    <th class="text-start">Customer</th>
+                                    <th class="text-end">Purchase</th>
+                                    <th class="text-end">Sale</th>
+                                    <th class="text-end">Expense</th>
+                                    <th class="text-end">Profit/Loss</th>
                                     <th class="text-center">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($purchases as $key => $purchase)
+                                @foreach ($orders as $key => $order)
                                     <tr>
                                         <td class="text-dark" style="width: 10px;">{{ $key + 1 }}</td>
-                                        <td class="text-start">{{ $purchase->inv }}</td>
-                                        <td class="text-start">{{ date('d-m-Y', strtotime($purchase->date)) }}</td>
-                                        <td class="text-start">{{ $purchase->supplier->title }}</td>
-                                        <td class="text-end">{{ number_format($purchase->total, 2) }}</td>
+                                        <td class="text-start">{{ $order->inv }}</td>
+                                        <td class="text-start">{{ date('d-m-Y', strtotime($order->date)) }}</td>
+                                        <td class="text-start">{{ $order->supplier->title }}</td>
+                                        <td class="text-start">{{ $order->customer->title }}</td>
+                                        <td class="text-end">{{ number_format($order->purchase_amount, 2) }}</td>
+                                        <td class="text-end">{{ number_format($order->sale_amount, 2) }}</td>
+                                        <td class="text-end">{{ number_format($order->route_expense, 2) }}</td>
+                                        <td class="text-end">
+                                            @if ($order->profit_loss >= 0)
+                                                <span
+                                                    class="text-success">{{ number_format($order->profit_loss, 2) }}</span>
+                                            @else
+                                                <span class="text-danger">{{ number_format($order->profit_loss, 2) }}</span>
+                                            @endif
+                                        </td>
 
                                         <td class="text-center">
                                             <div class="dropdown">
@@ -38,14 +53,14 @@
                                                 </button>
                                                 <ul class="dropdown-menu dropdown-menu-end">
                                                     <li><a class="dropdown-item"
-                                                            href="{{ route('purchase.show', $purchase->id) }}"><i
+                                                            href="{{ route('orders.show', $order->id) }}"><i
                                                                 class="ti ti-eye me-2 text-secondary"></i> View</a></li>
                                                     <li><a class="dropdown-item"
-                                                            href="{{ route('purchase.edit', $purchase->id) }}"><i
+                                                            href="{{ route('orders.edit', $order->id) }}"><i
                                                                 class="ti ti-edit me-2 text-secondary"></i> Edit</a></li>
                                                     <li>
                                                         <a class="dropdown-item text-danger"
-                                                            href="{{ route('purchases.delete', $purchase->id) }}"><i
+                                                            href="{{ route('order.delete', $order->id) }}"><i
                                                                 class="ti ti-trash me-2 text-danger"></i>
                                                             Delete</a>
                                                     </li>
@@ -69,46 +84,7 @@
     </div>
     <!-- Default Modals -->
 
-    <div id="new" class="modal fade" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true"
-        style="display: none;">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="myModalLabel">Create New Product</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"> </button>
-                </div>
-                <form action="{{ route('products.store') }}" method="post">
-                    @csrf
-                    <div class="modal-body">
-                        <div class="form-group mt-2">
-                            <label for="name">Name</label>
-                            <input type="text" name="name" required id="name" class="form-control">
-                        </div>
 
-                        <div class="form-group mt-2">
-                            <label for="unit">Unit</label>
-                            <select name="unit" id="unit" class="form-control">
-                                <option value="Ltr">Ltr</option>
-                                <option value="Nos">Nos</option>
-
-                            </select>
-                        </div>
-
-                        <div class="form-group mt-2">
-                            <label for="price"> Price</label>
-                            <input type="number" step="any" name="price" required value="" min="0"
-                                id="price" class="form-control">
-                        </div>
-
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save</button>
-                    </div>
-                </form>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
 @section('filter-content')
     <div class="mb-3">
         <div class="input-group">
@@ -133,6 +109,19 @@
                 @foreach ($suppliers as $sup)
                     <option value="{{ $sup->id }}" {{ $supplier == $sup->id ? 'selected' : '' }}>
                         {{ $sup->title }}</option>
+                @endforeach
+            </select>
+        </div>
+    </div>
+    <div class="mb-3">
+        <div class="input-group">
+            <span class="input-group-text"><i class="ti ti-user"></i></span>
+            <label for="customer" class="form-label" style="display: none;">Customers</label>
+            <select class="form-control" name="customer" id="customer">
+                <option value="all">All Customers</option>
+                @foreach ($customers as $cus)
+                    <option value="{{ $cus->id }}" {{ $customer == $cus->id ? 'selected' : '' }}>
+                        {{ $cus->title }}</option>
                 @endforeach
             </select>
         </div>

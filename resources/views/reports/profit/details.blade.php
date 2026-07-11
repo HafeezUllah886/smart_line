@@ -1,4 +1,4 @@
-﻿@extends('layout.app')
+@extends('layout.app')
 @section('content')
     <div class="container invoice-container">
         <div class="row">
@@ -37,51 +37,47 @@
                                 <thead class="table-light">
                                     <tr class="table-active">
                                         <th scope="col" class="p-1">#</th>
+                                        <th scope="col" class="p-1">Order #</th>
+                                        <th scope="col" class="p-1">Date</th>
                                         <th scope="col" class="p-1">Product</th>
-                                        <th scope="col" class="text-end p-1">Avg Purchase Rate</th>
-                                        <th scope="col" class="text-end p-1">Avg Sale Price</th>
-                                        <th scope="col" class="text-end p-1">Sold Qty</th>
-                                        <th scope="col" class="text-end p-1">Profit / Unit</th>
-                                        <th scope="col" class="text-end p-1">Profit</th>
-                                        <th scope="col" class="text-end p-1">Stock</th>
-                                        <th scope="col" class="text-end p-1">Stock Value</th>
+                                        <th scope="col" class="text-end p-1">Purchase Amount</th>
+                                        <th scope="col" class="text-end p-1">Sale Amount</th>
+                                        <th scope="col" class="text-end p-1">Route Expense</th>
+                                        <th scope="col" class="text-end p-1">Profit / Loss</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @php
-                                        $total = 0;
+                                        $total_profit = 0;
                                     @endphp
-                                    @foreach ($data as $key => $item)
-                                        @if ($item['sold'] > 0)
-                                            @php
-                                                $total += $item['profit'];
-                                            @endphp
-                                            <tr>
-                                                <td>{{ $key + 1 }}</td>
-                                                <td class="text-start p-1">{{ $item['name'] }}</td>
-                                                <td class="text-end p-1">{{ number_format($item['purchaseRate'], 2) }}</td>
-                                                <td class="text-end p-1">{{ number_format($item['saleRate'], 2) }}</td>
-                                                <td class="text-end p-1">{{ number_format($item['sold'], 2) }}</td>
-                                                <td class="text-end p-1">{{ number_format($item['ppu'], 2) }}</td>
-                                                <td class="text-end p-1">{{ number_format($item['profit'], 2) }}</td>
-                                                <td class="text-end p-1">{{ number_format($item['stock'], 2) }}</td>
-                                                <td class="text-end p-1">{{ number_format($item['stockValue'], 2) }}</td>
-                                            </tr>
-                                        @endif
+                                    @foreach ($orders as $key => $order)
+                                        @php
+                                            $total_profit += $order->profit_loss;
+                                        @endphp
+                                        <tr>
+                                            <td>{{ $key + 1 }}</td>
+                                            <td class="text-start p-1">{{ $order->inv }}</td>
+                                            <td class="text-start p-1">{{ date('d-m-Y', strtotime($order->date)) }}</td>
+                                            <td class="text-start p-1">{{ $order->product->name ?? 'N/A' }}</td>
+                                            <td class="text-end p-1">{{ number_format($order->purchase_amount, 2) }}</td>
+                                            <td class="text-end p-1">{{ number_format($order->sale_amount, 2) }}</td>
+                                            <td class="text-end p-1">{{ number_format($order->route_expense, 2) }}</td>
+                                            <td class="text-end p-1 {{ $order->profit_loss >= 0 ? 'text-success' : 'text-danger' }}">{{ number_format($order->profit_loss, 2) }}</td>
+                                        </tr>
                                     @endforeach
                                 </tbody>
                                 <tfoot>
                                     <tr>
-                                        <th colspan="6" class="text-end p-1">Total</th>
-                                        <th class="text-end p-1">{{ number_format($total, 2) }}</th>
+                                        <th colspan="7" class="text-end p-1">Total Orders Profit / Loss</th>
+                                        <th class="text-end p-1 {{ $total_profit >= 0 ? 'text-success' : 'text-danger' }}">{{ number_format($total_profit, 2) }}</th>
                                     </tr>
                                     <tr>
-                                        <th colspan="6" class="text-end p-1">Expense</th>
-                                        <th class="text-end p-1">{{ number_format($expenses, 2) }}</th>
+                                        <th colspan="7" class="text-end p-1">Other Expenses</th>
+                                        <th class="text-end p-1 text-danger">- {{ number_format($expenses, 2) }}</th>
                                     </tr>
                                     <tr>
-                                        <th colspan="6" class="text-end p-1">Net Profit</th>
-                                        <th class="text-end p-1">{{ number_format($total - $expenses, 2) }}</th>
+                                        <th colspan="7" class="text-end p-1">Net Profit</th>
+                                        <th class="text-end p-1 {{ ($total_profit - $expenses) >= 0 ? 'text-success' : 'text-danger' }}">{{ number_format($total_profit - $expenses, 2) }}</th>
                                     </tr>
                                 </tfoot>
 

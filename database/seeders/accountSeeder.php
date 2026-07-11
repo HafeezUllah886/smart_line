@@ -40,5 +40,11 @@ class accountSeeder extends Seeder
                 'type' => 'Check Post',
             ]
         );
+        accounts::create(
+            [
+                'title' => 'Another Check Post',
+                'type' => 'Check Post',
+            ]
+        );
     }
 }

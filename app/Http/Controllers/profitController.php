@@ -3,8 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\expenses;
-use App\Models\products;
-use App\Models\sale_details;
+use App\Models\Orders;
 use Illuminate\Http\Request;
 
 class profitController extends Controller
@@ -18,22 +17,9 @@ class profitController extends Controller
     {
         $from = $request->from;
         $to = $request->to;
-        $products = products::all();
-        $data = [];
-        foreach ($products as $product) {
-            $purchaseRate = avgPurchasePrice($from, $to, $product->id);
-            $saleRate = avgSalePrice($from, $to, $product->id);
-            $sold = sale_details::where('product_id', $product->id)->whereBetween('date', [$from, $to])->sum('qty');
-            $ppu = $saleRate - $purchaseRate;
-            $profit = $ppu * $sold;
-            $stock = getStock($product->id);
-            $stockValue = productStockValue($product->id);
-
-            $data[] = ['name' => $product->name, 'purchaseRate' => $purchaseRate, 'saleRate' => $saleRate, 'sold' => $sold, 'ppu' => $ppu, 'profit' => $profit, 'stock' => $stock, 'stockValue' => $stockValue];
-        }
-
+        $orders = Orders::with(['expenses', 'product'])->whereBetween('date', [$from, $to])->get();
         $expenses = expenses::whereBetween('date', [$from, $to])->sum('amount');
 
-        return view('reports.profit.details', compact('from', 'to', 'data', 'expenses'));
+        return view('reports.profit.details', compact('from', 'to', 'orders', 'expenses'));
     }
 }
