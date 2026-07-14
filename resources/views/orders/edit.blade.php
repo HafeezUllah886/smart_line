@@ -166,6 +166,32 @@
                                     </tfoot>
                                 </table>
                             </div>
+
+                            <div class="col-12">
+                                <h5 class="text-muted"><small>Other Route Expenses</small></h5>
+                                <hr class="my-2">
+                            </div>
+
+                            <div class="col-12">
+                                <table class="table table-striped table-hover">
+                                    <thead>
+                                        <th width="30%">Category</th>
+                                        <th class="text-center">Amount</th>
+                                        <th class="text-center">Notes</th>
+                                        <th class="text-center"><button type="button" class="btn btn-sm btn-success" onclick="addExpenseRow()">+</button></th>
+                                    </thead>
+                                    <tbody id="extra_expenses_list"></tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <th class="text-end">Total</th>
+                                            <th class="text-center" id="totalExtraExpenseAmount">0.00</th>
+                                            <th></th>
+                                            <th></th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+
                             <div class="col-3">
                                 <div class="form-group">
                                     <label for="comp">Sales Total</label>
@@ -227,6 +253,11 @@
             @foreach($order->expenses as $expense)
                 addExistingPost({{ $expense->post_id }}, '{{ $expense->post->title ?? 'N/A' }}', {{ $expense->amount }}, '{{ $expense->payment }}');
             @endforeach
+            
+            @foreach($order->extraExpenses as $extra)
+                addExistingExpenseRow('{{ $extra->expense_category_id }}', '{{ $extra->amount }}', '{{ addslashes($extra->notes) }}');
+            @endforeach
+
             updateTotal();
         });
 
@@ -283,6 +314,15 @@
 
             $("#totalPostAmount").html(total.toFixed(2));
 
+            var extra_total = 0;
+            $("input[name='expense_amount[]']").each(function() {
+                var inputValue = $(this).val();
+                if(inputValue) {
+                    extra_total += parseFloat(inputValue);
+                }
+            });
+            $("#totalExtraExpenseAmount").html(extra_total.toFixed(2));
+
             var sale_price = parseFloat($("#sale_price").val()) || 0;
             var sale_qty = parseFloat($("#sale_qty").val()) || 0;
             var purchase_price = parseFloat($("#purchase_price").val()) || 0;
@@ -296,8 +336,8 @@
 
             $("#purchase_total").val(purchase_amount.toFixed(2));
             $("#sales_total").val(sale_amount.toFixed(2));
-            $("#route_expense").val(total.toFixed(2));
-            $("#pl").val((sale_amount - purchase_amount - total).toFixed(2));
+            $("#route_expense").val((total + extra_total).toFixed(2));
+            $("#pl").val((sale_amount - purchase_amount - total - extra_total).toFixed(2));
         }
 
         function deleteRow(id) {
@@ -305,6 +345,46 @@
                 return value !== id;
             });
             $('#row_' + id).remove();
+            updateTotal();
+        }
+
+        var expenseCategoriesOptions = '<option value=""></option>';
+        @foreach($expenseCategories as $category)
+            expenseCategoriesOptions += '<option value="{{ $category->id }}">{{ $category->name }}</option>';
+        @endforeach
+
+        var expenseRowId = 0;
+        function addExpenseRow() {
+            expenseRowId++;
+            var html = '<tr id="exp_row_' + expenseRowId + '">';
+            html += '<td class="p-1"><select name="expense_category_id[]" class="form-control form-control-sm" required>' + expenseCategoriesOptions + '</select></td>';
+            html += '<td class="p-1"><input type="number" name="expense_amount[]" oninput="updateTotal()" step="any" value="0" min="0" class="form-control form-control-sm text-center"></td>';
+            html += '<td class="p-1"><input type="text" name="expense_notes[]" class="form-control form-control-sm"></td>';
+            html += '<td class="p-1 text-center"><button type="button" class="btn btn-sm btn-danger" onclick="deleteExpenseRow(' + expenseRowId + ')">X</button></td>';
+            html += '</tr>';
+            $("#extra_expenses_list").append(html);
+        }
+
+        function addExistingExpenseRow(categoryId, amount, notes) {
+            expenseRowId++;
+            
+            // Build options and pre-select
+            var options = '<option value=""></option>';
+            @foreach($expenseCategories as $category)
+                options += '<option value="{{ $category->id }}" ' + (categoryId == "{{ $category->id }}" ? "selected" : "") + '>{{ $category->name }}</option>';
+            @endforeach
+
+            var html = '<tr id="exp_row_' + expenseRowId + '">';
+            html += '<td class="p-1"><select name="expense_category_id[]" class="form-control form-control-sm" required>' + options + '</select></td>';
+            html += '<td class="p-1"><input type="number" name="expense_amount[]" oninput="updateTotal()" step="any" value="'+amount+'" min="0" class="form-control form-control-sm text-center"></td>';
+            html += '<td class="p-1"><input type="text" name="expense_notes[]" value="'+notes+'" class="form-control form-control-sm"></td>';
+            html += '<td class="p-1 text-center"><button type="button" class="btn btn-sm btn-danger" onclick="deleteExpenseRow(' + expenseRowId + ')">X</button></td>';
+            html += '</tr>';
+            $("#extra_expenses_list").append(html);
+        }
+
+        function deleteExpenseRow(id) {
+            $('#exp_row_' + id).remove();
             updateTotal();
         }
     </script>

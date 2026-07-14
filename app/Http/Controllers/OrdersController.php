@@ -52,8 +52,9 @@ class OrdersController extends Controller
         $accounts = accounts::active()->business()->get();
         $products = products::active()->get();
         $drivers = drivers::active()->get();
+        $expenseCategories = \App\Models\expenseCategories::all();
 
-        return view('orders.create', compact('customers', 'suppliers', 'checkposts', 'accounts', 'products', 'drivers'));
+        return view('orders.create', compact('customers', 'suppliers', 'checkposts', 'accounts', 'products', 'drivers', 'expenseCategories'));
 
     }
 
@@ -111,6 +112,24 @@ class OrdersController extends Controller
                 }
             }
 
+            if ($request->has('expense_category_id')) {
+                foreach ($request->expense_category_id as $key => $category_id) {
+                    if ($category_id) {
+                        $amount = $request->expense_amount[$key] ?? 0;
+                        $notes = $request->expense_notes[$key] ?? '';
+
+                        \App\Models\OrderExtraExpense::create([
+                            'order_id' => $order->id,
+                            'expense_category_id' => $category_id,
+                            'amount' => $amount,
+                            'notes' => $notes,
+                        ]);
+
+                        $route_expense += $amount;
+                    }
+                }
+            }
+
             $profit_loss = $request->sale_amount - $request->purchase_amount - $route_expense;
 
             $order->update([
@@ -147,7 +166,7 @@ class OrdersController extends Controller
      */
     public function show($id)
     {
-        $order = Orders::with(['expenses.post', 'supplier', 'customer', 'product', 'driver', 'purchaseAccount', 'saleAccount'])->findOrFail($id);
+        $order = Orders::with(['expenses.post', 'extraExpenses.category', 'supplier', 'customer', 'product', 'driver', 'purchaseAccount', 'saleAccount'])->findOrFail($id);
 
         return view('orders.show', compact('order'));
     }
@@ -157,15 +176,16 @@ class OrdersController extends Controller
      */
     public function edit($id)
     {
-        $order = Orders::with(['expenses.post'])->findOrFail($id);
+        $order = Orders::with(['expenses.post', 'extraExpenses.category'])->findOrFail($id);
         $customers = accounts::active()->customer()->get();
         $suppliers = accounts::active()->supplier()->get();
         $checkposts = accounts::active()->checkPost()->get();
         $accounts = accounts::active()->business()->get();
         $products = products::active()->get();
         $drivers = drivers::active()->get();
+        $expenseCategories = \App\Models\expenseCategories::all();
 
-        return view('orders.edit', compact('order', 'customers', 'suppliers', 'checkposts', 'accounts', 'products', 'drivers'));
+        return view('orders.edit', compact('order', 'customers', 'suppliers', 'checkposts', 'accounts', 'products', 'drivers', 'expenseCategories'));
     }
 
     /**
@@ -203,6 +223,25 @@ class OrdersController extends Controller
                         createTransaction($post_id, $request->date, 0, $amount, 'Pending Amount of Order No. '.$order->id, $ref);
                     } else {
                         createTransaction($post_id, $request->date, $amount, $amount, 'Payment of Order No. '.$order->id, $ref);
+                    }
+                }
+            }
+
+            \App\Models\OrderExtraExpense::where('order_id', $order->id)->delete();
+            if ($request->has('expense_category_id')) {
+                foreach ($request->expense_category_id as $key => $category_id) {
+                    if ($category_id) {
+                        $amount = $request->expense_amount[$key] ?? 0;
+                        $notes = $request->expense_notes[$key] ?? '';
+
+                        \App\Models\OrderExtraExpense::create([
+                            'order_id' => $order->id,
+                            'expense_category_id' => $category_id,
+                            'amount' => $amount,
+                            'notes' => $notes,
+                        ]);
+
+                        $route_expense += $amount;
                     }
                 }
             }
@@ -267,6 +306,7 @@ class OrdersController extends Controller
             // Delete transactions and expenses linked to this order
             \App\Models\transactions::where('refID', $ref)->delete();
             \App\Models\OrderExpenses::where('order_id', $order->id)->delete();
+            \App\Models\OrderExtraExpense::where('order_id', $order->id)->delete();
             
             // Delete the order itself
             $order->delete();

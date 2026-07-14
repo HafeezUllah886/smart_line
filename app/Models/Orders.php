@@ -18,6 +18,11 @@ class Orders extends Model
         return $this->hasMany(OrderExpenses::class, 'order_id', 'id');
     }
 
+    public function extraExpenses()
+    {
+        return $this->hasMany(OrderExtraExpense::class, 'order_id', 'id');
+    }
+
     public function supplier()
     {
         return $this->belongsTo(accounts::class, 'supplier_id');

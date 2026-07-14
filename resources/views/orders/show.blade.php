@@ -107,14 +107,51 @@
                                     </tbody>
                                     <tfoot>
                                         <tr>
-                                            <th colspan="3" class="text-end">Total Route Expenses</th>
-                                            <th class="text-end text-danger">{{ number_format($order->route_expense, 2) }}
+                                            <th colspan="3" class="text-end">Total Checkpost Expenses</th>
+                                            <th class="text-end text-danger">{{ number_format($order->expenses->sum('amount'), 2) }}
                                             </th>
                                         </tr>
                                     </tfoot>
                                 </table>
                             @else
                                 <p class="text-muted">No route expenses recorded for this order.</p>
+                            @endif
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h5 class="text-primary border-bottom pb-2">Other Route Expenses</h5>
+                            @if ($order->extraExpenses && $order->extraExpenses->count() > 0)
+                                <table class="table table-striped table-bordered table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Category</th>
+                                            <th>Notes</th>
+                                            <th class="text-end">Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($order->extraExpenses as $key => $expense)
+                                            <tr>
+                                                <td>{{ $key + 1 }}</td>
+                                                <td>{{ $expense->category->name ?? 'N/A' }}</td>
+                                                <td>{{ $expense->notes ?? '' }}</td>
+                                                <td class="text-end">{{ number_format($expense->amount, 2) }}</td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <th colspan="3" class="text-end">Total Other Expenses</th>
+                                            <th class="text-end text-danger">{{ number_format($order->extraExpenses->sum('amount'), 2) }}
+                                            </th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            @else
+                                <p class="text-muted">No other route expenses recorded for this order.</p>
                             @endif
                         </div>
                     </div>
