@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Symfony\Component\HttpFoundation\Response;
 
-class confirmPassword
+class ConfirmPassword
 {
     /**
      * Handle an incoming request.

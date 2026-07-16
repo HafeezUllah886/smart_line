@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\confirmPasswordController;
+use App\Http\Controllers\ConfirmPasswordController;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 
@@ -19,8 +19,8 @@ Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::middleware('auth')->group(function () {
 
-    Route::get('/confirm-password', [confirmPasswordController::class, 'showConfirmPasswordForm'])->name('confirm-password');
-    Route::post('/confirm-password', [confirmPasswordController::class, 'confirmPassword']);
+    Route::get('/confirm-password', [ConfirmPasswordController::class, 'showConfirmPasswordForm'])->name('confirm-password');
+    Route::post('/confirm-password', [ConfirmPasswordController::class, 'confirmPassword']);
 
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
