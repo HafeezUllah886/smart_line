@@ -170,13 +170,7 @@
                      <li class="no-sub {{ $routeName == 'products.index' ? 'active' : '' }}"><a
                              href="{{ route('products.index') }}"
                              class="{{ $routeName == 'products.index' ? 'active' : '' }}">Products List</a></li>
-                     <li class="no-sub {{ $routeName == 'product_stock' ? 'active' : '' }}"><a
-                             href="{{ route('product_stock') }}"
-                             class="{{ $routeName == 'product_stock' ? 'active' : '' }}">Stocks</a></li>
-                     <li class="no-sub {{ $routeName == 'stock-adjustments.index' ? 'active' : '' }}"><a
-                             href="{{ route('stock-adjustments.index') }}"
-                             class="{{ $routeName == 'stock-adjustments.index' ? 'active' : '' }}">Stock
-                             Adjustment</a></li>
+
                  </ul>
 
                  <!-- Reports -->
