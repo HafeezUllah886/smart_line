@@ -85,7 +85,7 @@
         <div class="col-lg-8 mb-4">
             <div class="card shadow-sm border-0 h-100">
                 <div class="card-header bg-transparent border-bottom">
-                    <h5 class="mb-0">Monthly Profit ({{ date('Y') }})</h5>
+                    <h5 class="mb-0">Last 10 Orders Profit</h5>
                 </div>
                 <div class="card-body">
                     <div id="profitChart" style="min-height: 300px;"></div>
@@ -128,7 +128,7 @@
                     data: {!! json_encode($profitData) !!}
                 }],
                 chart: {
-                    type: 'bar',
+                    type: 'line',
                     height: 350,
                     toolbar: {
                         show: false
@@ -145,7 +145,7 @@
                     enabled: false
                 },
                 xaxis: {
-                    categories: {!! json_encode($months) !!},
+                    categories: {!! json_encode($chartLabels) !!},
                 },
                 tooltip: {
                     y: {

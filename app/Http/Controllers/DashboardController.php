@@ -21,23 +21,14 @@ class DashboardController extends Controller
 
         $currentYear = date('Y');
 
-        $ordersProfit = Orders::selectRaw('MONTH(date) as month, SUM(profit_loss) as total_profit')
-            ->whereYear('date', $currentYear)
-            ->groupBy('month')
-            ->get()->keyBy('month');
+        $lastOrders = Orders::orderBy('id', 'desc')->take(10)->get()->reverse();
 
-        $expensesProfit = expenses::selectRaw('MONTH(date) as month, SUM(amount) as total_expense')
-            ->whereYear('date', $currentYear)
-            ->groupBy('month')
-            ->get()->keyBy('month');
-
-        $months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        $chartLabels = [];
         $profitData = [];
 
-        for ($i = 1; $i <= 12; $i++) {
-            $op = isset($ordersProfit[$i]) ? $ordersProfit[$i]->total_profit : 0;
-            $ep = isset($expensesProfit[$i]) ? $expensesProfit[$i]->total_expense : 0;
-            $profitData[] = $op - $ep;
+        foreach ($lastOrders as $order) {
+            $chartLabels[] = "Order #" . $order->id;
+            $profitData[] = (float) $order->profit_loss;
         }
 
         $topCustomers = Orders::with('customer')
@@ -53,7 +44,7 @@ class DashboardController extends Controller
             'customerBalance',
             'checkpostBalance',
             'businessBalance',
-            'months',
+            'chartLabels',
             'profitData',
             'topCustomers'
         ));
