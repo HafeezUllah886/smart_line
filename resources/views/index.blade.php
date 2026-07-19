@@ -84,7 +84,8 @@
                         <div>
                             <p class="mb-1 text-white-50">Customer - Supplier - Post</p>
                             <h4 class="mb-0 text-white">
-                                {{ number_format($customerBalance - $checkpostBalance - $supplierBalance, 2) }}</h4>
+                                {{ number_format($customerBalance - abs($checkpostBalance) - abs($supplierBalance), 2) }}
+                            </h4>
                         </div>
                         <div class="avatar avatar-md bg-white text-primary rounded-circle">
                             <i class="ti ti-calculator fs-4"></i>
