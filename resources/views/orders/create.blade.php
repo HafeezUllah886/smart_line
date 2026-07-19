@@ -177,14 +177,17 @@
                                     <thead>
                                         <th width="30%">Category</th>
                                         <th class="text-center">Amount</th>
+                                        <th class="text-center">Account</th>
                                         <th class="text-center">Notes</th>
-                                        <th class="text-center"><button type="button" class="btn btn-sm btn-success" onclick="addExpenseRow()">+</button></th>
+                                        <th class="text-center"><button type="button" class="btn btn-sm btn-success"
+                                                onclick="addExpenseRow()">+</button></th>
                                     </thead>
                                     <tbody id="extra_expenses_list"></tbody>
                                     <tfoot>
                                         <tr>
                                             <th class="text-end">Total</th>
                                             <th class="text-center" id="totalExtraExpenseAmount">0.00</th>
+                                            <th></th>
                                             <th></th>
                                             <th></th>
                                         </tr>
@@ -306,7 +309,7 @@
             var extra_total = 0;
             $("input[name='expense_amount[]']").each(function() {
                 var inputValue = $(this).val();
-                if(inputValue) {
+                if (inputValue) {
                     extra_total += parseFloat(inputValue);
                 }
             });
@@ -338,18 +341,32 @@
         }
 
         var expenseCategoriesOptions = '<option value=""></option>';
-        @foreach($expenseCategories as $category)
+        @foreach ($expenseCategories as $category)
             expenseCategoriesOptions += '<option value="{{ $category->id }}">{{ $category->name }}</option>';
         @endforeach
 
         var expenseRowId = 0;
+        var accounts = @json($accounts);
+
+
         function addExpenseRow() {
             expenseRowId++;
             var html = '<tr id="exp_row_' + expenseRowId + '">';
-            html += '<td class="p-1"><select name="expense_category_id[]" class="form-control form-control-sm" required>' + expenseCategoriesOptions + '</select></td>';
-            html += '<td class="p-1"><input type="number" name="expense_amount[]" oninput="updateTotal()" step="any" value="0" min="0" class="form-control form-control-sm text-center"></td>';
+            html += '<td class="p-1"><select name="expense_category_id[]" class="form-control form-control-sm" required>' +
+                expenseCategoriesOptions + '</select></td>';
+            html +=
+                '<td class="p-1"><input type="number" name="expense_amount[]" oninput="updateTotal()" step="any" value="0" min="0" class="form-control form-control-sm text-center"></td>';
+            html +=
+                '<td class="p-1"><select name="expense_account[]" class="form-control form-control-sm text-center p-1 w-100" id="account_' +
+                expenseRowId + '">';
+            accounts.forEach(function(account) {
+                html += '<option value="' + account.id + '" >' + account.title + '</option>';
+            });
+            html += '</select></td>';
             html += '<td class="p-1"><input type="text" name="expense_notes[]" class="form-control form-control-sm"></td>';
-            html += '<td class="p-1 text-center"><button type="button" class="btn btn-sm btn-danger" onclick="deleteExpenseRow(' + expenseRowId + ')">X</button></td>';
+            html +=
+                '<td class="p-1 text-center"><button type="button" class="btn btn-sm btn-danger" onclick="deleteExpenseRow(' +
+                expenseRowId + ')">X</button></td>';
             html += '</tr>';
             $("#extra_expenses_list").append(html);
         }

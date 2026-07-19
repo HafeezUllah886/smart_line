@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\accounts;
 use App\Models\drivers;
+use App\Models\expenseCategories;
 use App\Models\OrderExpenses;
+use App\Models\OrderExtraExpense;
 use App\Models\Orders;
 use App\Models\products;
+use App\Models\transactions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -52,7 +55,7 @@ class OrdersController extends Controller
         $accounts = accounts::active()->business()->get();
         $products = products::active()->get();
         $drivers = drivers::active()->get();
-        $expenseCategories = \App\Models\expenseCategories::all();
+        $expenseCategories = expenseCategories::all();
 
         return view('orders.create', compact('customers', 'suppliers', 'checkposts', 'accounts', 'products', 'drivers', 'expenseCategories'));
 
@@ -117,13 +120,20 @@ class OrdersController extends Controller
                     if ($category_id) {
                         $amount = $request->expense_amount[$key] ?? 0;
                         $notes = $request->expense_notes[$key] ?? '';
+                        $account_id = $request->expense_account[$key];
 
-                        \App\Models\OrderExtraExpense::create([
+                        OrderExtraExpense::create([
                             'order_id' => $order->id,
                             'expense_category_id' => $category_id,
+                            'account_id' => $account_id,
                             'amount' => $amount,
                             'notes' => $notes,
+                            'refID' => $ref,
                         ]);
+
+                        $category = expenseCategories::find($category_id);
+                        $category_title = $category ? $category->name : '';
+                        createTransaction($account_id, $request->date, 0, $amount, 'Expense of '.$category_title.' for Order No. '.$order->id, $ref);
 
                         $route_expense += $amount;
                     }
@@ -183,7 +193,7 @@ class OrdersController extends Controller
         $accounts = accounts::active()->business()->get();
         $products = products::active()->get();
         $drivers = drivers::active()->get();
-        $expenseCategories = \App\Models\expenseCategories::all();
+        $expenseCategories = expenseCategories::all();
 
         return view('orders.edit', compact('order', 'customers', 'suppliers', 'checkposts', 'accounts', 'products', 'drivers', 'expenseCategories'));
     }
@@ -200,8 +210,8 @@ class OrdersController extends Controller
             $ref = $order->refID;
 
             // Delete old transactions
-            \App\Models\transactions::where('refID', $ref)->delete();
-            \App\Models\OrderExpenses::where('order_id', $order->id)->delete();
+            transactions::where('refID', $ref)->delete();
+            OrderExpenses::where('order_id', $order->id)->delete();
 
             $route_expense = 0;
             if ($request->has('post_id')) {
@@ -209,7 +219,7 @@ class OrdersController extends Controller
                     $amount = $request->post_amount[$key];
                     $payment = $request->post_payment[$key];
 
-                    \App\Models\OrderExpenses::create([
+                    OrderExpenses::create([
                         'order_id' => $order->id,
                         'post_id' => $post_id,
                         'amount' => $amount,
@@ -227,19 +237,26 @@ class OrdersController extends Controller
                 }
             }
 
-            \App\Models\OrderExtraExpense::where('order_id', $order->id)->delete();
+            OrderExtraExpense::where('order_id', $order->id)->delete();
             if ($request->has('expense_category_id')) {
                 foreach ($request->expense_category_id as $key => $category_id) {
                     if ($category_id) {
                         $amount = $request->expense_amount[$key] ?? 0;
                         $notes = $request->expense_notes[$key] ?? '';
+                        $account_id = $request->expense_account[$key];
 
-                        \App\Models\OrderExtraExpense::create([
+                        OrderExtraExpense::create([
                             'order_id' => $order->id,
                             'expense_category_id' => $category_id,
+                            'account_id' => $account_id,
                             'amount' => $amount,
                             'notes' => $notes,
+                            'refID' => $ref,
                         ]);
+
+                        $category = expenseCategories::find($category_id);
+                        $category_title = $category ? $category->name : '';
+                        createTransaction($account_id, $request->date, 0, $amount, 'Expense of '.$category_title.' for Order No. '.$order->id, $ref);
 
                         $route_expense += $amount;
                     }
@@ -304,10 +321,10 @@ class OrdersController extends Controller
             $ref = $order->refID;
 
             // Delete transactions and expenses linked to this order
-            \App\Models\transactions::where('refID', $ref)->delete();
-            \App\Models\OrderExpenses::where('order_id', $order->id)->delete();
-            \App\Models\OrderExtraExpense::where('order_id', $order->id)->delete();
-            
+            transactions::where('refID', $ref)->delete();
+            OrderExpenses::where('order_id', $order->id)->delete();
+            OrderExtraExpense::where('order_id', $order->id)->delete();
+
             // Delete the order itself
             $order->delete();
 

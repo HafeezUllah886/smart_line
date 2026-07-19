@@ -177,6 +177,7 @@
                                     <thead>
                                         <th width="30%">Category</th>
                                         <th class="text-center">Amount</th>
+                                        <th class="text-center">Account</th>
                                         <th class="text-center">Notes</th>
                                         <th class="text-center"><button type="button" class="btn btn-sm btn-success" onclick="addExpenseRow()">+</button></th>
                                     </thead>
@@ -185,6 +186,7 @@
                                         <tr>
                                             <th class="text-end">Total</th>
                                             <th class="text-center" id="totalExtraExpenseAmount">0.00</th>
+                                            <th></th>
                                             <th></th>
                                             <th></th>
                                         </tr>
@@ -255,7 +257,7 @@
             @endforeach
             
             @foreach($order->extraExpenses as $extra)
-                addExistingExpenseRow('{{ $extra->expense_category_id }}', '{{ $extra->amount }}', '{{ addslashes($extra->notes) }}');
+                addExistingExpenseRow('{{ $extra->expense_category_id }}', '{{ $extra->amount }}', '{{ addslashes($extra->notes) }}', '{{ $extra->account_id }}');
             @endforeach
 
             updateTotal();
@@ -354,18 +356,25 @@
         @endforeach
 
         var expenseRowId = 0;
+        var accounts = @json($accounts);
+
         function addExpenseRow() {
             expenseRowId++;
             var html = '<tr id="exp_row_' + expenseRowId + '">';
             html += '<td class="p-1"><select name="expense_category_id[]" class="form-control form-control-sm" required>' + expenseCategoriesOptions + '</select></td>';
             html += '<td class="p-1"><input type="number" name="expense_amount[]" oninput="updateTotal()" step="any" value="0" min="0" class="form-control form-control-sm text-center"></td>';
+            html += '<td class="p-1"><select name="expense_account[]" class="form-control form-control-sm text-center p-1 w-100" id="account_' + expenseRowId + '">';
+            accounts.forEach(function(account) {
+                html += '<option value="' + account.id + '" >' + account.title + '</option>';
+            });
+            html += '</select></td>';
             html += '<td class="p-1"><input type="text" name="expense_notes[]" class="form-control form-control-sm"></td>';
             html += '<td class="p-1 text-center"><button type="button" class="btn btn-sm btn-danger" onclick="deleteExpenseRow(' + expenseRowId + ')">X</button></td>';
             html += '</tr>';
             $("#extra_expenses_list").append(html);
         }
 
-        function addExistingExpenseRow(categoryId, amount, notes) {
+        function addExistingExpenseRow(categoryId, amount, notes, accountId) {
             expenseRowId++;
             
             // Build options and pre-select
@@ -377,6 +386,11 @@
             var html = '<tr id="exp_row_' + expenseRowId + '">';
             html += '<td class="p-1"><select name="expense_category_id[]" class="form-control form-control-sm" required>' + options + '</select></td>';
             html += '<td class="p-1"><input type="number" name="expense_amount[]" oninput="updateTotal()" step="any" value="'+amount+'" min="0" class="form-control form-control-sm text-center"></td>';
+            html += '<td class="p-1"><select name="expense_account[]" class="form-control form-control-sm text-center p-1 w-100" id="account_' + expenseRowId + '">';
+            accounts.forEach(function(account) {
+                html += '<option value="' + account.id + '" ' + (accountId == account.id ? "selected" : "") + '>' + account.title + '</option>';
+            });
+            html += '</select></td>';
             html += '<td class="p-1"><input type="text" name="expense_notes[]" value="'+notes+'" class="form-control form-control-sm"></td>';
             html += '<td class="p-1 text-center"><button type="button" class="btn btn-sm btn-danger" onclick="deleteExpenseRow(' + expenseRowId + ')">X</button></td>';
             html += '</tr>';
