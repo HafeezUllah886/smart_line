@@ -1,7 +1,6 @@
 @extends('layout.app')
 
 @section('page-css')
-  
 @endsection
 
 @section('content')
@@ -78,6 +77,22 @@
                 </div>
             </div>
         </div>
+        <div class="col-md-3 col-sm-6 mb-4">
+            <div class="card h-100 shadow-sm border-0 bg-primary text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="mb-1 text-white-50">Customer - Supplier - Post</p>
+                            <h4 class="mb-0 text-white">
+                                {{ number_format($customerBalance - $checkpostBalance - $supplierBalance, 2) }}</h4>
+                        </div>
+                        <div class="avatar avatar-md bg-white text-primary rounded-circle">
+                            <i class="ti ti-calculator fs-4"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Row 2: Charts and Lists -->
@@ -149,7 +164,7 @@
                 },
                 tooltip: {
                     y: {
-                        formatter: function (val) {
+                        formatter: function(val) {
                             return val.toFixed(2)
                         }
                     }
